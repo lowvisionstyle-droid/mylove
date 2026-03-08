@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>My Love</title>
+
+<style>
+body{
+margin:0;
+background:black;
+overflow:hidden;
+font-family:Arial;
+color:white;
+text-align:center;
+}
+
+#title{
+position:absolute;
+top:120px;
+width:100%;
+font-size:40px;
+color:pink;
+font-weight:bold;
+}
+
+#text{
+position:absolute;
+bottom:120px;
+width:100%;
+font-size:22px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="title">My Love</div>
+<div id="text"></div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let t = 0;
+
+function drawHeart(){
+
+ctx.fillStyle="red";
+ctx.beginPath();
+
+for(let i=0;i<Math.PI*2;i+=0.01){
+
+let x = 16*Math.pow(Math.sin(i),3);
+let y = 13*Math.cos(i)-5*Math.cos(2*i)-2*Math.cos(3*i)-Math.cos(4*i);
+
+x = canvas.width/2 + x*12*(1+0.1*Math.sin(t));
+y = canvas.height/2 - y*12*(1+0.1*Math.sin(t));
+
+if(i===0) ctx.moveTo(x,y);
+else ctx.lineTo(x,y);
+
+}
+
+ctx.fill();
+
+}
+
+let stars = [];
+
+for(let i=0;i<100;i++){
+
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+speed:Math.random()*1+0.5
+})
+
+}
+
+function drawStars(){
+
+ctx.fillStyle="white";
+
+stars.forEach(s=>{
+
+s.y += s.speed;
+
+if(s.y>canvas.height) s.y=0;
+
+ctx.fillRect(s.x,s.y,2,2)
+
+})
+
+}
+
+let fireworks=[];
+
+function createFirework(){
+
+let x=Math.random()*canvas.width;
+let y=Math.random()*canvas.height/2;
+
+for(let i=0;i<30;i++){
+
+let angle=Math.random()*Math.PI*2;
+let speed=Math.random()*4+1;
+
+fireworks.push({
+x:x,
+y:y,
+dx:Math.cos(angle)*speed,
+dy:Math.sin(angle)*speed,
+life:50
+})
+
+}
+
+}
+
+function drawFireworks(){
+
+fireworks.forEach(p=>{
+
+p.x+=p.dx;
+p.y+=p.dy;
+p.life--;
+
+ctx.fillStyle=["yellow","cyan","pink","white"][Math.floor(Math.random()*4)];
+ctx.fillRect(p.x,p.y,3,3);
+
+})
+
+fireworks=fireworks.filter(p=>p.life>0);
+
+if(Math.random()<0.03) createFirework();
+
+}
+
+function animate(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+drawStars();
+drawFireworks();
+drawHeart();
+
+t+=0.05;
+
+requestAnimationFrame(animate);
+
+}
+
+animate();
+
+const message="jika kamu hujan yang penuh gemuruh, maka aku satu-satu nya orang yang tidak ingin berteduh";
+
+let i=0;
+
+function typeText(){
+
+if(i<message.length){
+
+document.getElementById("text").innerHTML += message[i];
+i++;
+
+setTimeout(typeText,70);
+
+}
+
+}
+
+typeText();
+
+</script>
+
+</body>
+</html>
